@@ -13,7 +13,6 @@
 ```
 sudo apt update
 sudo apt install libncursesw5-dev
-
 ```
 
 3. Клонируйте репозиторий.
