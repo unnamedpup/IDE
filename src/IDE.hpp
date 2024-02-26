@@ -1,6 +1,7 @@
 #pragma once
 
 #include "INCLUDE.cpp"
+#include "SETTINGS.cpp"
 #include "editor.hpp"
 #include "toolbar.hpp"
 #include "inputbar.hpp"

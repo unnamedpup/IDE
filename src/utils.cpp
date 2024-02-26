@@ -1,5 +1,4 @@
 #include "utils.hpp"
-#include <filesystem>
 
 std::string wstringToString(std::wstring fileName) {
     std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
@@ -49,4 +48,19 @@ std::wstring getLine(std::wstring text, int pos) {
 
     int LineEnd = i - LineStart;
     return text.substr(LineStart, LineEnd);
+};
+
+void initColors() {
+    start_color();
+    use_default_colors();
+
+    if (can_change_color() && COLORS >= 16) {
+        init_color(COLOR_GRAY, 128, 128, 128);
+    };
+
+    init_pair(COLOR_EDITOR, COLOR_WHITE, COLOR_BLACK);
+    init_pair(COLOR_TOOLBAR, COLOR_WHITE, COLOR_BLACK);
+    init_pair(COLOR_HIGHLIGHT_TOOLBAR, COLOR_WHITE, COLOR_GRAY);
+    init_pair(COLOR_MAIN, COLOR_WHITE, COLOR_BLACK);
+
 };

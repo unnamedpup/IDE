@@ -25,6 +25,13 @@ selectPos_(0) {
 
     position_ = newwin(1, 8, windowY_, 1);
 
+    wbkgd(frame_, COLOR_PAIR(COLOR_EDITOR));
+    wattron(frame_, COLOR_PAIR(COLOR_EDITOR));
+    wbkgd(buffer_, COLOR_PAIR(COLOR_EDITOR));
+    wattron(buffer_, COLOR_PAIR(COLOR_EDITOR));
+    wbkgd(position_, COLOR_PAIR(COLOR_EDITOR));
+    wattron(position_, COLOR_PAIR(COLOR_EDITOR));
+
     contents_ = L"";
 };
 

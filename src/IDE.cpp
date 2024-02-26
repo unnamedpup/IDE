@@ -10,6 +10,10 @@ void IDE::initialization() {
     keypad(stdscr, true);
 
     getmaxyx(stdscr, windowY_, windowX_);
+
+    initColors();
+    attron(COLOR_PAIR(COLOR_MAIN));
+    bkgd(COLOR_PAIR(COLOR_MAIN));
     resetMainScr_();
 
     toolBar_ = new ToolBar(windowX_, 1, 0, 0);

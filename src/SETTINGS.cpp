@@ -1,0 +1,7 @@
+#define COLOR_EDITOR 1
+#define COLOR_TOOLBAR 2
+#define COLOR_HIGHLIGHT_TOOLBAR 3
+#define COLOR_MAIN 4
+
+
+#define COLOR_GRAY 20
