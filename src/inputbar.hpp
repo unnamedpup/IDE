@@ -10,6 +10,7 @@ public:
     void input();   
     void retitle(std::wstring newTitle);
     std::wstring getContents();
+    void toEmpty();
 
     bool inFocus;
 

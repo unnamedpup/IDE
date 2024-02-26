@@ -7,6 +7,9 @@ title_(title) {
     buffer_ = newwin(windowY_, windowX_, curY, curX);
 
     keypad(buffer_, true);
+    wbkgd(buffer_, COLOR_PAIR(COLOR_INPUTBAR));
+    wattron(buffer_, COLOR_PAIR(COLOR_INPUTBAR));
+
     box(buffer_, 0, 0);
     mvwaddwstr(buffer_, 0, 1, title.c_str());
     wmove(buffer_, 1, 1);
@@ -33,12 +36,19 @@ void InputBar::input() {
 
             break;
         };
+        // ESC
+        case 27: {
+            inFocus = false;
+            contents_ = L"";
+
+            break;
+        };
         // ENTER
         case 10: {
             inFocus = false;
 
             break;
-        };
+        }
 
         default: {
             if (((int)contents_.length() < windowX_ - 2)) contents_ += wchar_t(key);
@@ -55,4 +65,8 @@ void InputBar::retitle(std::wstring newTitle) {
 
 std::wstring InputBar::getContents() {
     return contents_;
+};
+
+void InputBar::toEmpty() {
+    contents_ = L"";
 };

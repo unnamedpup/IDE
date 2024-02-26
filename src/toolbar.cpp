@@ -10,6 +10,9 @@ currentChoice_(-1) {
     buffer_ = newwin(windowY_, windowX_, cursorY_, cursorX_);
     keypad(buffer_, true);
     wmove(buffer_, 1, 1);
+    
+    wbkgd(buffer_, COLOR_PAIR(COLOR_TOOLBAR));
+    wattron(buffer_, COLOR_PAIR(COLOR_TOOLBAR));
 };
 
 WINDOW *ToolBar::getBuffer() {
@@ -19,9 +22,13 @@ WINDOW *ToolBar::getBuffer() {
 void ToolBar::draw() {
     wmove(buffer_, 0, 0);
     for (int i = 0; i < (int)choices_.size(); ++i) {
+        wattron(buffer_, COLOR_PAIR(inFocus && highlight_ == i ? COLOR_HIGHLIGHT : COLOR_TOOLBAR));
         waddwstr(buffer_, choices_[i].c_str());
     };
 
+    wmove(buffer_, 0, windowX_ - 1);
+    wattron(buffer_, COLOR_PAIR(COLOR_STOP)); 
+    wprintw(buffer_, "|");
     wrefresh(buffer_);
 };
 

@@ -1,7 +1,11 @@
 #define COLOR_EDITOR 1
 #define COLOR_TOOLBAR 2
-#define COLOR_HIGHLIGHT_TOOLBAR 3
+#define COLOR_HIGHLIGHT 3
 #define COLOR_MAIN 4
+#define COLOR_INPUTBAR 5
 
 
 #define COLOR_GRAY 20
+#define COLOR_DARK 21
+#define COLOR_LIGHT 22
+#define COLOR_STOP 23

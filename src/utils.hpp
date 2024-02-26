@@ -1,7 +1,6 @@
 #pragma once
 
 #include "INCLUDE.cpp"
-#include "SETTINGS.cpp"
 #include <filesystem>
 
 std::string wstringToString(std::wstring fileName);

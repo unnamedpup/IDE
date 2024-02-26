@@ -67,6 +67,7 @@ std::wstring Editor::getTitle() {
 
 void Editor::draw() {
     wclear(buffer_);
+    wattron(buffer_, COLOR_PAIR(COLOR_EDITOR));
 
     bool end = false;
     int line = 0, y = start_ > 1? -1 : 0;

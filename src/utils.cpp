@@ -54,13 +54,17 @@ void initColors() {
     start_color();
     use_default_colors();
 
-    if (can_change_color() && COLORS >= 16) {
-        init_color(COLOR_GRAY, 128, 128, 128);
+    if (can_change_color()) {
+        init_color(COLOR_GRAY, 192, 192, 192);
+        init_color(COLOR_DARK, 0, 0, 0);
+        init_color(COLOR_LIGHT, 999, 999, 999);
     };
 
-    init_pair(COLOR_EDITOR, COLOR_WHITE, COLOR_BLACK);
-    init_pair(COLOR_TOOLBAR, COLOR_WHITE, COLOR_BLACK);
-    init_pair(COLOR_HIGHLIGHT_TOOLBAR, COLOR_WHITE, COLOR_GRAY);
     init_pair(COLOR_MAIN, COLOR_WHITE, COLOR_BLACK);
+    init_pair(COLOR_EDITOR, COLOR_WHITE, COLOR_BLACK);
+    init_pair(COLOR_TOOLBAR, COLOR_WHITE, COLOR_DARK);
+    init_pair(COLOR_HIGHLIGHT, COLOR_WHITE, COLOR_GRAY);
+    init_pair(COLOR_INPUTBAR, COLOR_LIGHT, COLOR_DARK);
+    init_pair(COLOR_STOP, COLOR_DARK, COLOR_DARK);
 
 };

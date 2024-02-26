@@ -18,7 +18,7 @@ void IDE::initialization() {
 
     toolBar_ = new ToolBar(windowX_, 1, 0, 0);
     toolBar_->setChoices({
-        L"Выход ", L"Закрыть ", L"Создать ", L"Открыть ", L"Сохранить как "
+        L" Выход |", L" Закрыть |", L" Создать |", L" Открыть |", L" Сохранить как |"
     }); 
 
     #define EXIT 0
@@ -27,7 +27,7 @@ void IDE::initialization() {
     #define OPEN 3
     #define SAVE 4
 
-    inputBar_ = new InputBar((windowX_ - 16), 3, windowX_ / 2 - (windowX_ - 16) / 2, windowY_ / 2 - 1.5, L"Ввод");
+    inputBar_ = new InputBar((windowX_ - 10), 3, windowX_ / 2 - (windowX_ - 10) / 2, windowY_ / 2 - 1.5, L"Ввод");
 
     editors_.push_back(new Editor(windowX_, windowY_ - 1, 0, 1, DEFAULT_TITLE));
     editorPointer_ = -1;
@@ -112,12 +112,14 @@ void IDE::start() {
                         if (fileExists(name)) {
                             editorPointer_ = MAIN_EDITOR;
                             editors_[editorPointer_]->retitle(inputBar_->getContents());
+                            inputBar_->toEmpty(); 
                             editors_[editorPointer_]->setContents(fileToText(name));
 
                             editors_[editorPointer_]->drawFrame();
                             editors_[editorPointer_]->draw();
                         } else {
                             toolBar_->inFocus = true;
+                            inputBar_->toEmpty(); 
 
                             if (editorPointer_ == -1) resetMainScr_();
                             else editors_[editorPointer_]->draw();
@@ -131,6 +133,7 @@ void IDE::start() {
                 } else {
                     if (inputBar_->getContents() != L"" && editorPointer_ != -1) {
                         editors_[editorPointer_]->retitle(inputBar_->getContents());
+                        inputBar_->toEmpty(); 
                         textToFile(editors_[editorPointer_]->getContents(), name);
 
                         editors_[editorPointer_]->drawFrame();

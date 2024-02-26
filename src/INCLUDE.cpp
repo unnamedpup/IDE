@@ -3,3 +3,5 @@
 #include <string>
 #include <vector>
 #include <fstream>
+
+#include "SETTINGS.cpp"
