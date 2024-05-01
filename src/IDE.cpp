@@ -35,7 +35,6 @@ void IDE::initialization() {
     editorPointer_ = -1;
 
     output_ = new Output(windowX_, windowY_ - 1, 0, 1, DEFAULT_TITLE);
-    output_->setContents(L"Press ESC to finish\n");
 };
 
 void IDE::finalization() {
@@ -63,7 +62,7 @@ void IDE::start() {
             toolBar_->input();
 
             if (!toolBar_->inFocus) {
-                output_->clear();
+                // output_->clear();
                 if (editorPointer_ == -1) toolBar_->inFocus = true;
                 else {
                     editors_[editorPointer_]->inFocus = true;
@@ -116,10 +115,18 @@ void IDE::start() {
                     // editors_[editorPointer_]->inFocus = false;
                     // resetMainScr_();
                     // editorPointer_ = -1;
-                    output_->setContents(L"Press ESC to finish\n");
+                    textToFile(editors_[editorPointer_]->getContents(), wstringToString(editors_[editorPointer_]->getTitle()));
+                    toolBar_->inFocus = false;
+                    output_->setContents(L"Press ESC to finish\nFor input press Enter\n");
+                    output_->changePos(42);
+                    output_->moveCursor(0, 2);
+                    output_->drawFrame();   
+                    output_->draw();
                     output_->inFocus = true;
                     // toolBar_->inFocus = false;
                     run(output_);
+                    editors_[editorPointer_]->inFocus = true;
+                    toolBar_->draw();
 
                     break;
                 };
@@ -171,7 +178,11 @@ void IDE::start() {
                     };
                 };
             };
-        } else {
+        } 
+        else if (output_->inFocus) {
+            output_->input();
+        } 
+        else {
             editors_[editorPointer_]->draw();
             editors_[editorPointer_]->input();
 

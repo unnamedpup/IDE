@@ -284,6 +284,10 @@ void Editor::input() {
             break;
         };
 
+        case KEY_BTAB: case KEY_CTAB: case KEY_CATAB: case KEY_STAB: case 9: {
+            break;
+        };
+
         default: {
             if (curX_ > windowX_ - 4) {
                 contents_.insert(curPos_, L"\n");

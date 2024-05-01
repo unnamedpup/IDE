@@ -192,13 +192,33 @@ inline std::ostream& operator<<(std::ostream& os, const InputData & data) {
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void process_input(Context &context, InputCommand cmd){
-    int value;
-    std::cout << "Input value: ";
-    std::cin >> value;
+// void process_input(Context &context, InputCommand cmd){
+//     int value;
+//     std::cout << "Input value: ";
+//     std::cin >> value;
 
+//     context.stack.emplace_back(value);
+//     std::cout << "Process input called! " << std::get<int>(context.stack.back()) << '\n';
+// }
+
+void process_input(Context &context, InputCommand cmd, Output *output){
+    int value;
+    // std::cout << "Input value: ";
+    // std::cin >> value;
+    std::size_t sizeOldContents = output->getContents().length() - 1;
+
+    while (output->inFocus) {
+        output->input();
+        output->drawFrame();
+        output->draw();
+    }
+    value = std::stoi(output->getContents().substr(sizeOldContents));
     context.stack.emplace_back(value);
-    std::cout << "Process input called! " << std::get<int>(context.stack.back()) << '\n';
+    // std::wstring contents = output->getContents();
+    // contents.insert((int)contents.length(), L"\n");
+    // output->setContents(contents);
+    output->inFocus = true;
+    // std::cout << "Process input called! " << std::get<int>(context.stack.back()) << '\n';
 }
 
 // void process_output(Context &context, OutputCommand cmd){
@@ -231,7 +251,7 @@ void process_take(Context &context, TakeCommand cmd){
         context.stack.emplace_back(context.registers[link.identifier]);
     } else
         context.stack.emplace_back(cmd.link);
-    std::cout << "Process take called! " << cmd << '\n';
+    // std::cout << "Process take called! " << cmd << '\n';
 }
 
 void process_put(Context &context, PutCommand cmd){
@@ -241,7 +261,7 @@ void process_put(Context &context, PutCommand cmd){
     auto value = std::get<int>(context.stack.back());
     context.stack.pop_back();
 
-    std::cout << "Putting " << value << " Into " << link.identifier << '\n';
+    // std::cout << "Putting " << value << " Into " << link.identifier << '\n';
 
     if (link.mode == "регистр") {
         context.registers[link.identifier] = value;
@@ -271,7 +291,7 @@ void process_arithmetic(Context &context, ArithmeticOperation operation) {
     }, context.stack.back());
     context.stack.pop_back();
 
-    std::cout << "Left: " << left << " Right: " << right << '\n';
+    // std::cout << "Left: " << left << " Right: " << right << '\n';
 
     int res;
     switch (operation) {
@@ -297,7 +317,7 @@ void process_arithmetic(Context &context, ArithmeticOperation operation) {
 
 void process_set_mark(Context &context, const SetMarkCommand& cmd, size_t idx) {
     context.marks[cmd.name] = idx + 1;
-    std::cout << "Added " << cmd.name << " mark to context\n";
+    // std::cout << "Added " << cmd.name << " mark to context\n";
 }
 
 void process_jump_to_mark(Context &context, const JumpToMarkCommand& cmd) {
@@ -306,20 +326,20 @@ void process_jump_to_mark(Context &context, const JumpToMarkCommand& cmd) {
 
 void process_condition(Context &context, Condition c) {
     context.stack.emplace_back(c);
-    std::cout << "Added condition on top of the stack\n";
+    // std::cout << "Added condition on top of the stack\n";
 }
 
 void process_int(Context &context, int d) {
     context.stack.emplace_back(d);
-    std::cout << "Added int on top of the stack\n";
+    // std::cout << "Added int on top of the stack\n";
 }
 
 void process_pass(Context &context, PassCommand cmd){
-    std::cout << "PASS" << '\n';
+    // std::cout << "PASS" << '\n';
 }
 
 ConditionalBranchOperation process_conditional(Context &context, const ConditionalCommand& cmd) {
-    std::cout << "Conditional command processing\n";
+    // std::cout << "Conditional command processing\n";
     auto condition = std::get<Condition>(context.stack.back());
     context.stack.pop_back();
 
@@ -330,11 +350,11 @@ ConditionalBranchOperation process_conditional(Context &context, const Condition
     context.stack.pop_back();
 
     if (condition.check(left_value, right_value)) {
-        std::cout << "Returning TRUE " << '\n';
+        // std::cout << "Returning TRUE " << '\n';
         return cmd.true_branch;
     }
 
-    std::cout << "Returning FALSE " << '\n';
+    // std::cout << "Returning FALSE " << '\n';
     return cmd.false_branch;
 }
 
@@ -460,7 +480,8 @@ void run(Output *output) {
         using T = std::decay_t<decltype(arg)>;
 
         if constexpr (std::is_same_v<T, InputCommand>)
-            process_input(*context, arg);
+            // process_input(*context, arg);
+            process_input(*context, arg, output);
         else if constexpr (std::is_same_v<T, OutputCommand>)
             // process_output(*context, arg);
             process_output(*context, arg, output);
@@ -478,14 +499,14 @@ void run(Output *output) {
             process_condition(*context, arg);
         else if constexpr (std::is_same_v<T, ConditionalCommand>) {
             program[idx + 1] = variant_cast(process_conditional(*context, arg));
-            std::cout << "New command " << program[idx + 1] << '\n';
+            // std::cout << "New command " << program[idx + 1] << '\n';
         }
         else if constexpr (std::is_same_v<T, JumpToMarkCommand>)
             process_jump_to_mark(*context, arg);
         else if constexpr (std::is_same_v<T, int>)
             process_int(*context, arg);
-        else
-            std::cout << "error " << arg << '\n';
+        // else
+            // std::cout << "error " << arg << '\n';
         return program;
     }, cmd);
 

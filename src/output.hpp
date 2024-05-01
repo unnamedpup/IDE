@@ -19,6 +19,8 @@ public:
     void clear();
     std::wstring getContents();
     void setContents(std::wstring newContents);
+    void changePos(int newPos);
+    void moveCursor(int newX, int newY);
 
     bool inFocus;
 
