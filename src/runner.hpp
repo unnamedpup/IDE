@@ -42,7 +42,7 @@ public:
         this->t = t;
     }
 
-    [[nodiscard]] bool check(double l, double r) const {
+    [[nodiscard]] bool check(int l, int r) const {
         switch (this->t) {
             case Type::eq:
                 return l == r;
@@ -66,7 +66,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////////
 
-using StackItem = std::variant<double, Link, Condition>;
+using StackItem = std::variant<int, Link, Condition>;
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -74,7 +74,7 @@ using StackItem = std::variant<double, Link, Condition>;
 class Context {
 public:
 
-    Context(std::map<std::string, double> registers,
+    Context(std::map<std::string, int> registers,
             std::vector<StackItem> stack,
             std::map<std::string, size_t> marks
     ) {
@@ -83,7 +83,7 @@ public:
         this->marks = std::move(marks);
     }
 
-    std::map<std::string, double> registers;
+    std::map<std::string, int> registers;
     std::vector<StackItem> stack;
     std::map<std::string, size_t> marks;
     std::string mark_to_jump = "";
@@ -169,11 +169,11 @@ struct GetCommandName {
     std::string operator()(const Condition& c) { return "Condition"; }
     std::string operator()(const JumpToMarkCommand& c) { return "Jump to mark command"; }
     std::string operator()(const PassCommand& c) { return "Pass command"; }
-    std::string operator()(const double& c) { return "Just double"; }
+    std::string operator()(const int& c) { return "Just int"; }
 };
 
 using InputData = std::variant<
-        double,
+        int,
         Condition,
         InputCommand,
         OutputCommand,
@@ -193,24 +193,24 @@ inline std::ostream& operator<<(std::ostream& os, const InputData & data) {
 //////////////////////////////////////////////////////////////////////////////////
 
 void process_input(Context &context, InputCommand cmd){
-    double value;
+    int value;
     std::cout << "Input value: ";
     std::cin >> value;
 
     context.stack.emplace_back(value);
-    std::cout << "Process input called! " << std::get<double>(context.stack.back()) << '\n';
+    std::cout << "Process input called! " << std::get<int>(context.stack.back()) << '\n';
 }
 
 // void process_output(Context &context, OutputCommand cmd){
-//     // Replace Link with double
-//     auto value = std::get<double>(context.stack.back());
+//     // Replace Link with int
+//     auto value = std::get<int>(context.stack.back());
 //     context.stack.pop_back();
 //     std::cout << "Вывод: " << value << '\n';
 // }
 
 void process_output(Context &context, OutputCommand cmd, Output *output){
-    // Replace Link with double
-    auto value = std::get<double>(context.stack.back());
+    // Replace Link with int
+    auto value = std::get<int>(context.stack.back());
     context.stack.pop_back();
     std::wstring contents = output->getContents();
     contents.insert((int)contents.length(), std::to_wstring((int)value));
@@ -238,7 +238,7 @@ void process_put(Context &context, PutCommand cmd){
     auto link = std::get<Link>(context.stack.back());
     context.stack.pop_back();
 
-    auto value = std::get<double>(context.stack.back());
+    auto value = std::get<int>(context.stack.back());
     context.stack.pop_back();
 
     std::cout << "Putting " << value << " Into " << link.identifier << '\n';
@@ -249,31 +249,31 @@ void process_put(Context &context, PutCommand cmd){
 }
 
 void process_arithmetic(Context &context, ArithmeticOperation operation) {
-    double right = std::visit([&context](auto&& arg) {
+    int right = std::visit([&context](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
 
         if constexpr (std::is_same_v<T, Link>)
             return context.registers[arg.identifier];
-        if constexpr (std::is_same_v<T, double>)
+        if constexpr (std::is_same_v<T, int>)
             return arg;
-        return 0.0;
+        return 0;
     }, context.stack.back());
     context.stack.pop_back();
 
-    double left = std::visit([&context](auto&& arg) {
+    int left = std::visit([&context](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
 
         if constexpr (std::is_same_v<T, Link>)
             return context.registers[arg.identifier];
-        if constexpr (std::is_same_v<T, double>)
+        if constexpr (std::is_same_v<T, int>)
             return arg;
-        return 0.0;
+        return 0;
     }, context.stack.back());
     context.stack.pop_back();
 
     std::cout << "Left: " << left << " Right: " << right << '\n';
 
-    double res;
+    int res;
     switch (operation) {
         case ArithmeticOperation::plus: {
             res = left + right;
@@ -309,9 +309,9 @@ void process_condition(Context &context, Condition c) {
     std::cout << "Added condition on top of the stack\n";
 }
 
-void process_double(Context &context, double d) {
+void process_int(Context &context, int d) {
     context.stack.emplace_back(d);
-    std::cout << "Added double on top of the stack\n";
+    std::cout << "Added int on top of the stack\n";
 }
 
 void process_pass(Context &context, PassCommand cmd){
@@ -323,10 +323,10 @@ ConditionalBranchOperation process_conditional(Context &context, const Condition
     auto condition = std::get<Condition>(context.stack.back());
     context.stack.pop_back();
 
-    auto right_value = std::get<double>(context.stack.back());
+    auto right_value = std::get<int>(context.stack.back());
     context.stack.pop_back();
 
-    auto left_value = std::get<double>(context.stack.back());
+    auto left_value = std::get<int>(context.stack.back());
     context.stack.pop_back();
 
     if (condition.check(left_value, right_value)) {
@@ -420,7 +420,7 @@ std::vector<InputData> parser(std::string file_name) {
             } else if (elem["имя"] == "переход")
                 program.emplace_back(JumpToMarkCommand(elem["куда"]));
         } else if (elem.is_number()) {
-            program.emplace_back((double)elem);
+            program.emplace_back((int)elem);
         }
     }
     return program;
@@ -432,7 +432,7 @@ void run(Output *output) {
 
 
 
-    std::map<std::string, double> registers;
+    std::map<std::string, int> registers;
     std::vector<StackItem> stack;
     std::map<std::string, size_t> marks;
 
@@ -482,8 +482,8 @@ void run(Output *output) {
         }
         else if constexpr (std::is_same_v<T, JumpToMarkCommand>)
             process_jump_to_mark(*context, arg);
-        else if constexpr (std::is_same_v<T, double>)
-            process_double(*context, arg);
+        else if constexpr (std::is_same_v<T, int>)
+            process_int(*context, arg);
         else
             std::cout << "error " << arg << '\n';
         return program;
