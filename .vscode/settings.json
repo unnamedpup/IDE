@@ -51,6 +51,15 @@
         "chrono": "cpp",
         "ratio": "cpp",
         "iomanip": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "any": "cpp",
+        "cstring": "cpp",
+        "forward_list": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "optional": "cpp",
+        "ranges": "cpp",
+        "valarray": "cpp",
+        "variant": "cpp"
     }
 }

@@ -4,7 +4,9 @@
 #include "editor.hpp"
 #include "toolbar.hpp"
 #include "inputbar.hpp"
+#include "output.hpp"
 #include "utils.hpp"
+
 
 #define MAIN_EDITOR 0
 #define DEFAULT_TITLE L"Untitled.json"
@@ -23,6 +25,7 @@ private:
     std::vector <Editor*> editors_;
     ToolBar *toolBar_;
     InputBar *inputBar_;
+    Output *output_;
     uint8_t windowX_, windowY_;
     int8_t editorPointer_;
     bool running_;

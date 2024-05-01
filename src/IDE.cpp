@@ -1,4 +1,5 @@
 #include "IDE.hpp"
+#include "runner.hpp"
 
 IDE::IDE() {};
 
@@ -18,7 +19,7 @@ void IDE::initialization() {
 
     toolBar_ = new ToolBar(windowX_, 1, 0, 0);
     toolBar_->setChoices({
-        L" Выход |", L" Закрыть |", L" Создать |", L" Открыть |", L" Сохранить как |"
+        L" Выход |", L" Закрыть |", L" Создать |", L" Открыть |", L" Сохранить как |", L" Запуск |"
     }); 
 
     #define EXIT 0
@@ -26,11 +27,15 @@ void IDE::initialization() {
     #define NEW 2
     #define OPEN 3
     #define SAVE 4
+    #define RUN 5
 
     inputBar_ = new InputBar((windowX_ - 10), 3, windowX_ / 2 - (windowX_ - 10) / 2, windowY_ / 2 - 1.5, L"Ввод");
 
     editors_.push_back(new Editor(windowX_, windowY_ - 1, 0, 1, DEFAULT_TITLE));
     editorPointer_ = -1;
+
+    output_ = new Output(windowX_, windowY_ - 1, 0, 1, DEFAULT_TITLE);
+    output_->setContents(L"Press ESC to finish\n");
 };
 
 void IDE::finalization() {
@@ -58,6 +63,7 @@ void IDE::start() {
             toolBar_->input();
 
             if (!toolBar_->inFocus) {
+                output_->clear();
                 if (editorPointer_ == -1) toolBar_->inFocus = true;
                 else {
                     editors_[editorPointer_]->inFocus = true;
@@ -78,6 +84,7 @@ void IDE::start() {
                     editors_[editorPointer_]->retitle(DEFAULT_TITLE);
                     editors_[editorPointer_]->drawFrame();
                     editors_[editorPointer_]->draw();
+                    output_->retitle(DEFAULT_TITLE);
 
                     break;
                 };
@@ -85,6 +92,9 @@ void IDE::start() {
                 case CLOSE: {
                     if (editorPointer_ == -1) break;
                     editors_[editorPointer_]->inFocus = false;
+
+                    output_->inFocus = false;
+
                     resetMainScr_();
                     editorPointer_ = -1;
 
@@ -100,6 +110,19 @@ void IDE::start() {
 
                     break;
                 };
+
+                case RUN: {
+                    if (editorPointer_ == -1) break;
+                    // editors_[editorPointer_]->inFocus = false;
+                    // resetMainScr_();
+                    // editorPointer_ = -1;
+                    output_->setContents(L"Press ESC to finish\n");
+                    output_->inFocus = true;
+                    // toolBar_->inFocus = false;
+                    run(output_);
+
+                    break;
+                };
             };
         } else if (inputBar_->inFocus) {
             inputBar_->draw();
@@ -112,6 +135,9 @@ void IDE::start() {
                         if (fileExists(name)) {
                             editorPointer_ = MAIN_EDITOR;
                             editors_[editorPointer_]->retitle(inputBar_->getContents());
+
+                            output_->retitle(inputBar_->getContents());
+
                             inputBar_->toEmpty(); 
                             editors_[editorPointer_]->setContents(fileToText(name));
 
@@ -161,7 +187,7 @@ void IDE::resetMainScr_() {
     mvprintw(windowY_ / 2 - 3, 0, ((std::string) 
     "\nДля навигации в окнах используйте стрелки.\n" +
     "ESC - переключение между окнами (панель инструментов и зона редактирования).\n" +
-    "CTRL + H - сохраняет совершенные изменения в файле.\n" + 
+    "CTRL + U - сохраняет совершенные изменения в файле.\n" + 
     "ENTER - выбор в панели инструментов.\n")
     .c_str());
 
