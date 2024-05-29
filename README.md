@@ -1,6 +1,8 @@
 
 # IDE for JSON-language
 
+<a href="https://github.com/unnamedpup/IDE/actions/workflows/c-cpp.yml"><img src="https://github.com/unnamedpup/IDE/actions/workflows/c-cpp.yml/badge.svg?branch=master" alt="Build Status"></a>
+
 Текстовый редактор для нового языка программирования основанного на JSON.
 Реализован на языке программирования C++ при помощи библиотеки ncursesw.
 
