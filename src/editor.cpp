@@ -133,6 +133,10 @@ void Editor::input() {
             break;
         };
 
+        case CTRL('c'): {            
+            break;
+        };
+
         case 27: {
             inFocus = false;
 

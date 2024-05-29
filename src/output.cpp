@@ -127,15 +127,13 @@ void Output::input() {
     wget_wch(buffer_, &key);
 
     switch (key) {
-        // case CTRL('u'): {
-
-        //     textToFile(contents_, wstringToString(title_));
-            
-        //     break;
-        // };
+        case CTRL('c'): {            
+            break;
+        };
 
         case 27: {
             inFocus = false;
+            run = false;
 
             break;
         };

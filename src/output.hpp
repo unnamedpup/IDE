@@ -23,6 +23,7 @@ public:
     void moveCursor(int newX, int newY);
 
     bool inFocus;
+    bool run = true;
 
 private:
     WINDOW *buffer_, *position_, *frame_;

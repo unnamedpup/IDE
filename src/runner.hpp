@@ -201,23 +201,45 @@ inline std::ostream& operator<<(std::ostream& os, const InputData & data) {
 //     std::cout << "Process input called! " << std::get<int>(context.stack.back()) << '\n';
 // }
 
+bool not_error;
+
+void changeError() {
+    not_error = false;
+};
+
 void process_input(Context &context, InputCommand cmd, Output *output){
     int value;
     // std::cout << "Input value: ";
     // std::cin >> value;
     std::size_t sizeOldContents = output->getContents().length() - 1;
+    std::wstring oldContents = output->getContents();
 
     while (output->inFocus) {
         output->input();
         output->drawFrame();
         output->draw();
     }
-    value = std::stoi(output->getContents().substr(sizeOldContents));
-    context.stack.emplace_back(value);
+    
+    if (output->run == true) {
+    try
+    {
+        value = std::stoi(output->getContents().substr(sizeOldContents));
+        context.stack.emplace_back(value);
+    }
+    catch (const std::invalid_argument & e) {
+        std::wstring contents = output->getContents();
+        contents.insert((int)contents.length(), L"Введено не числовое значение");
+        output->setContents(contents);
+        output->drawFrame();
+        output->draw();
+        changeError();
+    }
+    }
     // std::wstring contents = output->getContents();
     // contents.insert((int)contents.length(), L"\n");
     // output->setContents(contents);
     output->inFocus = true;
+    // output->run = true;
     // std::cout << "Process input called! " << std::get<int>(context.stack.back()) << '\n';
 }
 
@@ -268,7 +290,7 @@ void process_put(Context &context, PutCommand cmd){
     }
 }
 
-void process_arithmetic(Context &context, ArithmeticOperation operation) {
+void process_arithmetic(Context &context, ArithmeticOperation operation, Output *output) {
     int right = std::visit([&context](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
 
@@ -308,8 +330,18 @@ void process_arithmetic(Context &context, ArithmeticOperation operation) {
             break;
         }
         case ArithmeticOperation::divide: {
-            res = left / right;
-            break;
+            if (right == 0) {
+                res = 0;
+                std::wstring contents = output->getContents();
+                contents.insert((int)contents.length(), L"Деление на ноль");
+                output->setContents(contents);
+                output->drawFrame();
+                output->draw();
+                changeError();
+            } else {
+                res = left / right;
+                break;
+            }
         }
     }
     context.stack.emplace_back(res);
@@ -446,6 +478,7 @@ std::vector<InputData> parser(std::string file_name) {
     return program;
 };
 
+
 void run(Output *output) {
     std::string name = wstringToString(output->getTitle());
     std::vector<InputData> program = parser(name);
@@ -458,8 +491,10 @@ void run(Output *output) {
 
     auto context = std::make_shared<Context>(registers, stack, marks);
     size_t idx = 0;
+    output->run = true;
+    not_error = true;
 
-    while (idx != program.size()) {
+    while (idx != program.size() && output->run && not_error) {
     if (!context->mark_to_jump.empty()) {
         if (!context->marks.count(context->mark_to_jump)) {
             auto cmd = program[idx];
@@ -490,7 +525,7 @@ void run(Output *output) {
         else if constexpr (std::is_same_v<T, PutCommand>)
             process_put(*context, arg);
         else if constexpr (std::is_same_v<T, ArithmeticOperation>)
-            process_arithmetic(*context, arg);
+            process_arithmetic(*context, arg, output);
         else if constexpr (std::is_same_v<T, PassCommand>)
             process_pass(*context, arg);
         else if constexpr (std::is_same_v<T, SetMarkCommand>)
