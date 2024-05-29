@@ -1,0 +1,36 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Set up CMake
+      run: |
+        sudo apt-get -y install cmake
+        echo "PATH=$PATH:/usr/bin/cmake" >> $GITHUB_ENV
+        cmake --version
+        
+
+    - name: Build project
+      run: |
+        mkdir build
+        cd build
+        cmake ../
+        make
+        
+
+    - name: Run Interpreter tests
+      run: |
+        cd build
+        cd tests
+        ./tests/tests
