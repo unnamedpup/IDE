@@ -122,7 +122,6 @@ void Output::drawFrame() {
 };
 
 void Output::input() {
-    // wmove(buffer_, 10, 10);
     wint_t key;
     wget_wch(buffer_, &key);
 
@@ -138,77 +137,11 @@ void Output::input() {
             break;
         };
 
-        // case KEY_UP: {
-        //     if (curY_ == 0) break;
-
-        //     --curY_;
-        //     int LineLength = (int)getLine(contents_, curPos_ - 2).length();
-        //     curPos_ -= curX_;
-
-        //     LineLength = (int)getLine(contents_, curPos_ - 2).length();
-        //     if (curX_ >= LineLength) {
-        //         curX_ = LineLength > 0? LineLength - 1 : 0;
-        //         --curPos_;
-        //     } else {
-        //         curPos_ -= LineLength - curX_;
-        //     };
-
-        //     if (curY_ < start_) -- start_;
-
-        //     break;
-        // };
-
-        // case KEY_DOWN: {
-        //     int prevX = curX_, prevY = curY_, prevPos = curPos_;
-
-        //     int LineLength = (int)getLine(contents_, curX_ > 0? curPos_ - 1 : curPos_).length();
-        //     LineLength -= LineLength == 0? 0 : 1;
-
-        //     curPos_ += LineLength - curX_;
-        //     ++curY_;
-
-        //     LineLength = (int)getLine(contents_, curPos_ + 1).length();
-        //     LineLength -= LineLength == 0? 0 : 1;
-        //     if (curX_ >= LineLength) {
-        //         curPos_ += LineLength + 1;
-        //         curX_ = LineLength;
-        //     } else {
-        //         curPos_ += curX_ + 1;
-        //     };
-
-        //     if (curPos_ > (int)contents_.length()) {
-        //         curX_ = prevX;
-        //         curY_ = prevY;
-        //         curPos_ = prevPos;
-                
-        //         break;
-        //     };
-
-        //     if (curY_ - start_ + (start_ >= 1? 1 : 0) > windowY_ - 4) ++ start_;
-
-        //     break;
-        // };
 
         case KEY_UP: case KEY_DOWN: {
             break;
         };
 
-        // case KEY_LEFT: {
-        //     if (curPos_ < 1) break;
-
-        //     if (curX_ < 1) {
-        //         --curY_;
-        //         int LineLength = (int)getLine(contents_, curPos_ - 2).length();
-        //         curX_ = LineLength == 0? 1 : LineLength;
-        //     };
-            
-        //     --curPos_;
-        //     --curX_;
-
-        //     if (curY_ < start_) --start_;
-
-        //     break;
-        // };
         case KEY_LEFT: {
             if (curPos_ < 1) break;
 
@@ -222,23 +155,6 @@ void Output::input() {
             break;
         };
 
-        // case KEY_RIGHT: {
-        //     if (curPos_ + 1 > (int)contents_.length()) break;
-        //     if (curX_ + 1 > (int)getLine(contents_, curPos_).length()) {
-        //         ++curPos_;
-        //         ++curY_;
-        //         curX_ = 0;
-
-        //         if (curY_ - start_ + (start_ >= 1? 1 : 0) > windowY_ - 4) ++start_;
-
-        //         break;
-        //     };
-
-        //     ++curPos_;
-        //     ++curX_;
-
-        //     break;
-        // };
 
         case KEY_RIGHT: {
             if (curPos_ + 1 > (int)contents_.length()) break;
@@ -250,53 +166,6 @@ void Output::input() {
             break;
         };
 
-        // case KEY_BACKSPACE: {
-        //     int oldSelectPos = selectPos_, 
-        //         oldCurPos = curPos_,
-        //         targX = 0,
-        //         targY = 0,
-        //         targPos = 0;
-
-        //     if (selected_) {
-        //         if (oldCurPos >= oldSelectPos) {
-        //             targPos = oldSelectPos;
-        //             targX = selectX_;
-        //             targY = selectY_;
-        //         } else {
-        //             targPos = oldCurPos;
-        //             curPos_ = oldSelectPos;
-        //             targX = curX_;
-        //             targY = curY_;
-        //         };
-        //     };
-
-        //     while (curPos_ > 0) {
-        //         if (curX_ < 1) {
-        //             --curY_;
-        //             int LineLength = (int)getLine(contents_, curPos_ - 2).length();
-        //             curX_ = LineLength == 0? 1 : LineLength;
-        //         };
-                
-        //         contents_.erase(curPos_ - 1, 1);
-        //         --curPos_; 
-        //         --curX_;
-
-        //         if (curY_ < start_) --start_;
-
-        //         if (!selected_) break;
-
-        //         if (curPos_ <= targPos) {
-        //             curPos_ = targPos;
-        //             curX_ = targX;
-        //             curY_ = targY;
-        //             selected_ = false;
-
-        //             break;
-        //         };
-        //     };
-
-        //     break;
-        // };
 
 
         case KEY_BACKSPACE: {
@@ -342,16 +211,6 @@ void Output::input() {
             break;
         };
 
-        // case 10: {
-        //     contents_.insert(curPos_, L"\n");
-        //     ++curPos_;
-        //     ++curY_;
-        //     curX_ = 0;
-
-        //     if (curY_ - start_ + (start_ >= 1? 1 : 0) > windowY_ - 4) ++start_;
-
-        //     break;
-        // };
 
         case 10: {
             contents_.insert(curPos_, L"\n");

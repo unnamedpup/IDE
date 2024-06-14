@@ -62,7 +62,6 @@ void IDE::start() {
             toolBar_->input();
 
             if (!toolBar_->inFocus) {
-                // output_->clear();
                 if (editorPointer_ == -1) toolBar_->inFocus = true;
                 else {
                     editors_[editorPointer_]->inFocus = true;
@@ -112,9 +111,6 @@ void IDE::start() {
 
                 case RUN: {
                     if (editorPointer_ == -1) break;
-                    // editors_[editorPointer_]->inFocus = false;
-                    // resetMainScr_();
-                    // editorPointer_ = -1;
                     textToFile(editors_[editorPointer_]->getContents(), wstringToString(editors_[editorPointer_]->getTitle()));
                     toolBar_->inFocus = false;
                     output_->setContents(L"Press ESC to finish\nFor input press Enter\n");
@@ -123,7 +119,6 @@ void IDE::start() {
                     output_->drawFrame();   
                     output_->draw();
                     output_->inFocus = true;
-                    // toolBar_->inFocus = false;
                     run(output_);
                     editors_[editorPointer_]->inFocus = true;
                     toolBar_->draw();

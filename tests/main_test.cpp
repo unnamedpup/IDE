@@ -44,3 +44,19 @@ TEST_CASE("LOCAL TEST: Null division numbers", "[null_division_numbers]") {
     std::wstring expectedResult = L"Деление на ноль";
     REQUIRE(output->getContents() == expectedResult);
 }
+
+TEST_CASE("LOCAL TEST: Not JSON", "[not_json]") {
+    Output *output = new Output(1, 1, 0, 1, L"../../tests/not_json_test.json");
+    output->setContents(L"");
+    run(output);
+    std::wstring expectedResult = L"Не соответствует формату JSON";
+    REQUIRE(output->getContents() == expectedResult);
+}
+
+TEST_CASE("LOCAL TEST: Format test", "[format]") {
+    Output *output = new Output(1, 1, 0, 1, L"../../tests/format_test.json");
+    output->setContents(L"");
+    run(output);
+    std::wstring expectedResult = L"Ошибка синтаксиса";
+    REQUIRE(output->getContents() == expectedResult);
+}

@@ -1,4 +1,3 @@
-// #define _XOPEN_SOURCE_EXTENDED
 #include <locale.h>
 
 #include "INCLUDE.cpp"
@@ -7,7 +6,6 @@
 
 
 int main(int argc, char* argv[]) {
-    // setlocale(LC_ALL, "");
     std::locale::global(std::locale(""));
 
     IDE app;

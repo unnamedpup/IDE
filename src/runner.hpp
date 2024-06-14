@@ -190,17 +190,6 @@ inline std::ostream& operator<<(std::ostream& os, const InputData & data) {
     return os << std::visit(GetCommandName{}, data);
 }
 
-//////////////////////////////////////////////////////////////////////////////////
-
-// void process_input(Context &context, InputCommand cmd){
-//     int value;
-//     std::cout << "Input value: ";
-//     std::cin >> value;
-
-//     context.stack.emplace_back(value);
-//     std::cout << "Process input called! " << std::get<int>(context.stack.back()) << '\n';
-// }
-
 bool not_error;
 
 void changeError() {
@@ -209,8 +198,6 @@ void changeError() {
 
 void process_input(Context &context, InputCommand cmd, Output *output){
     int value;
-    // std::cout << "Input value: ";
-    // std::cin >> value;
     std::size_t sizeOldContents = output->getContents().length() - 1;
     std::wstring oldContents = output->getContents();
 
@@ -235,23 +222,11 @@ void process_input(Context &context, InputCommand cmd, Output *output){
         changeError();
     }
     }
-    // std::wstring contents = output->getContents();
-    // contents.insert((int)contents.length(), L"\n");
-    // output->setContents(contents);
     output->inFocus = true;
-    // output->run = true;
-    // std::cout << "Process input called! " << std::get<int>(context.stack.back()) << '\n';
 }
 
-// void process_output(Context &context, OutputCommand cmd){
-//     // Replace Link with int
-//     auto value = std::get<int>(context.stack.back());
-//     context.stack.pop_back();
-//     std::cout << "Вывод: " << value << '\n';
-// }
 
 void process_output(Context &context, OutputCommand cmd, Output *output){
-    // Replace Link with int
     auto value = std::get<int>(context.stack.back());
     context.stack.pop_back();
     std::wstring contents = output->getContents();
@@ -259,21 +234,15 @@ void process_output(Context &context, OutputCommand cmd, Output *output){
     output->setContents(contents);
     output->drawFrame();
     output->draw();
-    // std::cout << "Вывод: " << value << '\n';
 }
 
 void process_take(Context &context, TakeCommand cmd){
-    // if cmd.link == NULL
-    // take link from stack
-    // get register value from link
-    // place value on the stack
     if (cmd.link.isEmpty()){
         auto link = std::get<Link>(context.stack.back());
         context.stack.pop_back();
         context.stack.emplace_back(context.registers[link.identifier]);
     } else
         context.stack.emplace_back(cmd.link);
-    // std::cout << "Process take called! " << cmd << '\n';
 }
 
 void process_put(Context &context, PutCommand cmd){
@@ -282,9 +251,6 @@ void process_put(Context &context, PutCommand cmd){
 
     auto value = std::get<int>(context.stack.back());
     context.stack.pop_back();
-
-    // std::cout << "Putting " << value << " Into " << link.identifier << '\n';
-
     if (link.mode == "регистр") {
         context.registers[link.identifier] = value;
     }
@@ -414,10 +380,23 @@ auto variant_cast(const std::variant<Args...>& v) -> variant_cast_proxy<Args...>
 
 //////////////////////////////////////////////////////////////////////////////////
 
-std::vector<InputData> parser(std::string file_name) {
+std::vector<InputData> parser(std::string file_name, Output *output) {
     std::vector<InputData> program;
     std::ifstream example(file_name);
-    json data = json::parse(example);
+    json data;
+     try
+    {
+        data = json::parse(example);
+    }
+    catch (const json::parse_error& e)
+    {
+         std::wstring contents = output->getContents();
+        contents.insert((int)contents.length(), L"Не соответствует формату JSON");
+        output->setContents(contents);
+        output->drawFrame();
+        output->draw();
+        return program;
+    }
 
     for (auto& elem : data) {
         if (elem.is_string()) {
@@ -449,7 +428,15 @@ std::vector<InputData> parser(std::string file_name) {
                 program.emplace_back(Condition(Condition::Type::lt));
             else if (elem == "<=")
                 program.emplace_back(Condition(Condition::Type::le));
-            // switch for string
+            else {
+                std::wstring contents = output->getContents();
+                contents.insert((int)contents.length(), L"Ошибка синтаксиса");
+                output->setContents(contents);
+                output->drawFrame();
+                output->draw();
+                std::vector<InputData> bad_program;
+                return bad_program; 
+            }
         } else if (elem.is_object()) {
             if (elem["имя"] == "взять") {
                 Link l = Link(elem["что"]["режим"], elem["что"]["имя"]);
@@ -473,6 +460,14 @@ std::vector<InputData> parser(std::string file_name) {
                 program.emplace_back(JumpToMarkCommand(elem["куда"]));
         } else if (elem.is_number()) {
             program.emplace_back((int)elem);
+        } else {
+            std::wstring contents = output->getContents();
+            contents.insert((int)contents.length(), L"Ошибка синтаксиса");
+            output->setContents(contents);
+            output->drawFrame();
+            output->draw();
+            std::vector<InputData> bad_program;
+            return bad_program; 
         }
     }
     return program;
@@ -481,7 +476,7 @@ std::vector<InputData> parser(std::string file_name) {
 
 void run(Output *output) {
     std::string name = wstringToString(output->getTitle());
-    std::vector<InputData> program = parser(name);
+    std::vector<InputData> program = parser(name, output);
 
 
 
@@ -494,6 +489,9 @@ void run(Output *output) {
     output->run = true;
     not_error = true;
 
+    if (!program.empty()) {
+
+    
     while (idx != program.size() && output->run && not_error) {
     if (!context->mark_to_jump.empty()) {
         if (!context->marks.count(context->mark_to_jump)) {
@@ -515,10 +513,8 @@ void run(Output *output) {
         using T = std::decay_t<decltype(arg)>;
 
         if constexpr (std::is_same_v<T, InputCommand>)
-            // process_input(*context, arg);
             process_input(*context, arg, output);
         else if constexpr (std::is_same_v<T, OutputCommand>)
-            // process_output(*context, arg);
             process_output(*context, arg, output);
         else if constexpr (std::is_same_v<T, TakeCommand>)
             process_take(*context, arg);
@@ -534,18 +530,25 @@ void run(Output *output) {
             process_condition(*context, arg);
         else if constexpr (std::is_same_v<T, ConditionalCommand>) {
             program[idx + 1] = variant_cast(process_conditional(*context, arg));
-            // std::cout << "New command " << program[idx + 1] << '\n';
         }
         else if constexpr (std::is_same_v<T, JumpToMarkCommand>)
             process_jump_to_mark(*context, arg);
         else if constexpr (std::is_same_v<T, int>)
             process_int(*context, arg);
-        // else
-            // std::cout << "error " << arg << '\n';
+        else
+            {
+                std::wstring contents = output->getContents();
+                contents.insert((int)contents.length(), L"Ошибка синтаксиса");
+                output->setContents(contents);
+                output->drawFrame();
+                output->draw();
+                // return;
+            }
         return program;
     }, cmd);
 
     idx++;
+}
 }
 
 }
