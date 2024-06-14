@@ -4,7 +4,7 @@
 #include <src/output.hpp>
 
 TEST_CASE("LOCAL TEST: Adding numbers", "[adding_numbers]") {
-    Output *output = new Output(1, 1, 0, 1, L"../tests/adding_test.json");
+    Output *output = new Output(1, 1, 0, 1, L"../../tests/adding_test.json");
     output->setContents(L"");
     run(output);
     int expectedResult = 12488;
@@ -12,7 +12,7 @@ TEST_CASE("LOCAL TEST: Adding numbers", "[adding_numbers]") {
 }
 
 TEST_CASE("LOCAL TEST: Subtracting numbers", "[subtracting_numbers]") {
-    Output *output = new Output(1, 1, 0, 1, L"../tests/subtracting_test.json");
+    Output *output = new Output(1, 1, 0, 1, L"../../tests/subtracting_test.json");
     output->setContents(L"");
     run(output);
     int expectedResult = -9972;
@@ -20,7 +20,7 @@ TEST_CASE("LOCAL TEST: Subtracting numbers", "[subtracting_numbers]") {
 }
 
 TEST_CASE("LOCAL TEST: Multiplication numbers", "[multiplication_numbers]") {
-    Output *output = new Output(1, 1, 0, 1, L"../tests/multiplication_test.json");
+    Output *output = new Output(1, 1, 0, 1, L"../../tests/multiplication_test.json");
     output->setContents(L"");
     run(output);
     int expectedResult = 28934;
@@ -29,7 +29,7 @@ TEST_CASE("LOCAL TEST: Multiplication numbers", "[multiplication_numbers]") {
 
 
 TEST_CASE("LOCAL TEST: Division numbers", "[division_numbers]") {
-    Output *output = new Output(1, 1, 0, 1, L"../tests/division_test.json");
+    Output *output = new Output(1, 1, 0, 1, L"../../tests/division_test.json");
     output->setContents(L"");
     run(output);
     int expectedResult = 16;
@@ -38,7 +38,7 @@ TEST_CASE("LOCAL TEST: Division numbers", "[division_numbers]") {
 
 
 TEST_CASE("LOCAL TEST: Null division numbers", "[null_division_numbers]") {
-    Output *output = new Output(1, 1, 0, 1, L"../tests/null_division_test.json");
+    Output *output = new Output(1, 1, 0, 1, L"../../tests/null_division_test.json");
     output->setContents(L"");
     run(output);
     std::wstring expectedResult = L"Деление на ноль";
