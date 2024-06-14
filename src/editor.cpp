@@ -126,7 +126,7 @@ void Editor::input() {
     wget_wch(buffer_, &key);
 
     switch (key) {
-        case CTRL('u'): {
+        case CTRL('h'): {
 
             textToFile(contents_, wstringToString(title_));
             
