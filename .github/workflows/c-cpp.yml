@@ -31,5 +31,5 @@ jobs:
 
     - name: Run Interpreter tests
       run: |
-        cd build
-        ./tests/tests
+        cd build/tests
+        ./tests
